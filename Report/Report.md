@@ -19,7 +19,7 @@ Each image comes into the processing pipline:
 1. GrayScale (Pixel[i] . `0.299, 0.587, 0.114`)
 2. Normalized ( ( GrayScalePixel[i] - 128. ) / 128 )
 
-For the **Trainig Set** images I also add 5 rotation (`-30, -20, -10, 10, 20, 30`) of the images into the trainig set so the network can figure the rotation out.
+For the **Trainig Set** images I also add 5 rotation (`-30, -20, -10, 10, 20, 30`) of the images into the trainig set so the network can figure the rotation out. So my new training has **243593** (7 × 34799) samples
 
 ![](./preprocess_pipline.png)
 
@@ -55,7 +55,7 @@ I use `scipy.ndimage.rotate` with `nearest` mode and then resize the result to `
 ### Training
 I use softmax corss entropy method with AdamOptimizer try to minimize the mean of error. 
 
-* EPOCHS = 20
+* EPOCHS = 11
 * BATCH_SIZE = 128
 * LEARNING_RATE = 0.001
 * KEEP_PROB = 0.5
@@ -76,13 +76,12 @@ Model saved
 
 Test Result:
 >INFO:tensorflow:Restoring parameters from ./network
-Test Accuracy = 94.43%
-
+Test Accuracy = 94.44%
 
 ---
 
 ### Internet Images:
-I've downloaded 5 images from internet and test network with them. The accuracy was 40%. One problem was there were no `Speed limit (30 km/h)` in the training examples and the result was the closest gauss (I think!)
+I've downloaded 5 images from internet and test network with them. The accuracy was 40%. One problem was there were no `Speed limit (130 km/h)` in the training examples and the result was the closest gauss (I think!)
 
 ![](./internet_images.png)
 
