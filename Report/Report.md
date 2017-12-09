@@ -27,6 +27,21 @@ I use `scipy.ndimage.rotate` with `nearest` mode and then resize the result to `
 
 ---
 
+### Network Solution
+
+At first I've started with **LeNet** network.
+
+The first problem I was encounter was that the network doesn't preform well with the images. At first I've decided to add an inception module I think of the inception module like this
+1. Understand The Sign's shape
+2. Understand The Sign's inside images 
+This decision cuase imporvment but not enough
+
+The second problem I think about was the first conv layer. In lenet detecting hand writing needs less features cause there is no wild background like the traffic signs. So I make the first conv layer deeper to extract more features.
+
+And The third problem I was encountered was the redundancy because of the inception module. So I add two droupout layers in the fully connected parts to remove redundancy and forcing the network to learn and extract better features.
+
+---
+
 ### Network model
 | Layer         		|     Description	        					| 
 |:---------------------:|:---------------------------------------------:| 
@@ -62,29 +77,42 @@ I use softmax corss entropy method with AdamOptimizer try to minimize the mean o
 
 Training Result:
 >Training...
-EPOCH 1 Validation Accuracy = 86.42%
-EPOCH 2 Validation Accuracy = 90.79%
-EPOCH 3 Validation Accuracy = 93.06%
-EPOCH 4 Validation Accuracy = 93.15%
-EPOCH 5 Validation Accuracy = 94.08%
-EPOCH 6 Validation Accuracy = 93.92%
-EPOCH 7 Validation Accuracy = 94.06%
-EPOCH 8 Validation Accuracy = 94.74%
-EPOCH 9 Validation Accuracy = 94.76%
-EPOCH 10 Validation Accuracy = 94.69%
+EPOCH 1 Validation Accuracy = 89.86%
+EPOCH 2 Validation Accuracy = 92.52%
+EPOCH 3 Validation Accuracy = 94.29%
+EPOCH 4 Validation Accuracy = 94.51%
+EPOCH 5 Validation Accuracy = 95.76%
+EPOCH 6 Validation Accuracy = 95.10%
+EPOCH 7 Validation Accuracy = 96.03%
+EPOCH 8 Validation Accuracy = 96.94%
+EPOCH 9 Validation Accuracy = 96.92%
+EPOCH 10 Validation Accuracy = 96.78%
+EPOCH 11 Validation Accuracy = 97.37%
 Model saved
+
 
 Test Result:
 >INFO:tensorflow:Restoring parameters from ./network
-Test Accuracy = 94.44%
+Test Accuracy = 94.92%
 
 ---
 
 ### Internet Images:
-I've downloaded 5 images from internet and test network with them. The accuracy was 40%. One problem was there were no `Speed limit (130 km/h)` in the training examples and the result was the closest gauss (I think!)
+I've downloaded 5 images from internet and test network with them. The accuracy was **80% (To be fair it's 60%)**. One problem was there were no `Speed limit (130 km/h)` in the training examples and the result was the closest gauss (I think!). The network is very confident about its decision, As you can see in the below histogram one value is much higher in compare of the others. So As shown network has confidence about its decisions. For example most of the time it choose the sign with confidence over 90%.
+
+The network doesn't perform well on the internet images rather than the test images. Here is a list of the causes I think the accuracy is not as well as the test samples:
+1. The dataset is very samll. If we want to messure the total performance we should gather more data from the internet and run the network on that
+2. In the preprocessing part we have to add mroe converted data. for example changing the brightness, crop the image (For example change its size to 28x28 and then resize it by the `nearest` method) to enrich the data
+3. The dataset wasn't normalized itself. We can add more data in dataset so for each sign we have nearly equal amount of samples.
 
 ![](./internet_images.png)
 
 And the softmax result result is here:
+>**Stop** => {'Roundabout mandatory': '3.89%', 'Road work': '3.35%', 'Stop': '54.79%', 'Traffic signals': '6.58%', 'Priority road': '16.69%'}
+**Roundabout mandatory** =>{'Roundabout mandatory': '1.40%', 'Keep right': '0.04%', 'No entry': '0.02%', 'Speed limit (100km/h)': '0.03%', 'Priority road': '98.41%'}
+**Keep Right** => {'Turn left ahead': '0.00%', 'Keep right': '100.00%', 'Go straight or right': '0.00%', 'Go straight or left': '0.00%', 'Ahead only': '0.00%'}
+**Right-of-way at the next intersection** => {'End of no passing by vehicles over 3.5 metric tons': '0.00%', 'Right-of-way at the next intersection': '100.00%', 'Road work': '0.00%', 'Slippery road': '0.00%', 'Beware of ice/snow': '0.00%'}
+**Speed limit (130km/h)** => {'Speed limit (30km/h)': '95.55%', 'Speed limit (20km/h)': '4.27%', 'Speed limit (70km/h)': '0.03%', 'Speed limit (100km/h)': '0.03%', 'Speed limit (120km/h)': '0.12%'}
+
 
 ![](./soft_max.png)
